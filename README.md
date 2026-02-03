@@ -3,8 +3,11 @@
 AI-powered command-line assistant that suggests shell commands from natural language queries.
 
 [![CI](https://github.com/techquestsdev/howto/actions/workflows/ci.yml/badge.svg)](https://github.com/techquestsdev/howto/actions/workflows/ci.yml)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/techquestsdev/howto?style=flat-square&logo=go&logoColor=white)](https://github.com/techquestsdev/howto/blob/main/go.mod)
 [![Go Report Card](https://goreportcard.com/badge/github.com/techquestsdev/howto)](https://goreportcard.com/report/github.com/techquestsdev/howto)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![codecov](https://img.shields.io/codecov/c/github/techquestsdev/howto?style=flat-square)](https://codecov.io/gh/techquestsdev/howto)
+[![Release](https://img.shields.io/github/v/release/techquestsdev/howto?style=flat-square&include_prereleases)](https://github.com/techquestsdev/howto/releases)
+[![License](https://img.shields.io/github/license/techquestsdev/howto?style=flat-square)](https://github.com/techquestsdev/howto/blob/main/LICENSE)
 
 ## Features
 
@@ -95,8 +98,8 @@ Output:
 ```
 === Available Providers ===
 
-Provider        Status          Default Model        Env Variable
---------        ------          -------------        ------------
+Provider        Status          Default Model             Env Variable
+--------        ------          -------------             ------------
 OpenAI          Ready           gpt-4o                    OPENAI_API_KEY
 Anthropic       Not configured  claude-sonnet-4-20250514  ANTHROPIC_API_KEY
 Gemini          Ready           gemini-2.0-flash          GEMINI_API_KEY
@@ -173,14 +176,14 @@ make build
 make check
 ```
 
-## Contributing
-
-Contributions are welcome! Please read the [Contributing Guide](CONTRIBUTING.md) for details.
-
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Credits
 
 Inspired by the original [howto](https://github.com/antonmedv/howto) by Anton Medvedev.
+
+---
+
+### Made with ❤️ and Go
