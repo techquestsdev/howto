@@ -6,7 +6,7 @@ require (
 	github.com/cockroachdb/errors v1.12.0
 	github.com/fatih/color v1.19.0
 	github.com/spf13/cobra v1.10.2
-	golang.org/x/term v0.40.0
+	golang.org/x/term v0.41.0
 )
 
 require (
