@@ -39,10 +39,14 @@ Environment Variables:
   GEMINI_API_KEY      Google Gemini API key
   DEEPSEEK_API_KEY    DeepSeek API key
   GITHUB_TOKEN        GitHub token (for Copilot)
+  OPENAI_BASE_URL     Override OpenAI base URL (host only, e.g. http://localhost:1337)
+  ANTHROPIC_BASE_URL  Override Anthropic base URL
+  GEMINI_BASE_URL     Override Gemini base URL
+  DEEPSEEK_BASE_URL   Override DeepSeek base URL
   HOWTO_MODEL         Override default model for the provider
   HOWTO_PROVIDER      Force a specific provider
   HOWTO_TIMEOUT       Request timeout (e.g., "30s", "1m") - default: 30s`,
-	Version: "1.0.0",
+	Version: "1.1.0",
 	Args:    cobra.MinimumNArgs(1),
 	RunE:    runHowto,
 }
@@ -105,7 +109,7 @@ func getProvider() (*provider.Provider, string, error) {
 	if providerFlag != "" {
 		p, apiKey, err := provider.GetByName(providerFlag)
 		if err != nil {
-			ui.PrintError(fmt.Sprintf("Provider '%s' not found or not configured", providerFlag))
+			ui.PrintError(err.Error())
 
 			return nil, "", errors.Wrap(err, "failed to get provider")
 		}

@@ -48,7 +48,7 @@ func (p *Provider) queryAnthropic(ctx context.Context, apiKey, model, promptText
 		return "", pkgerrors.Wrap(err, "failed to marshal request")
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, p.Endpoint, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, p.Endpoint(), bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", pkgerrors.Wrap(err, "failed to create request")
 	}

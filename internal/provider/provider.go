@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	pkgerrors "github.com/cockroachdb/errors"
@@ -21,12 +22,28 @@ const TimeoutEnvVar = "HOWTO_TIMEOUT"
 
 // Provider represents an AI provider configuration.
 type Provider struct {
-	Name         string
-	Endpoint     string
-	DefaultModel string
-	EnvVar       string
-	AuthType     AuthType
-	Configured   bool
+	Name          string
+	BaseURL       string
+	Path          string
+	BaseURLEnvVar string
+	DefaultModel  string
+	EnvVar        string
+	AuthType      AuthType
+	Configured    bool
+}
+
+// Endpoint returns the resolved request URL, honoring the per-provider
+// BaseURLEnvVar override when set. Trailing slashes on the override are
+// trimmed so callers can pass either "https://host" or "https://host/".
+func (p *Provider) Endpoint() string {
+	base := p.BaseURL
+	if p.BaseURLEnvVar != "" {
+		if override := os.Getenv(p.BaseURLEnvVar); override != "" {
+			base = override
+		}
+	}
+
+	return strings.TrimRight(base, "/") + p.Path
 }
 
 // AuthType defines how the provider authenticates requests.
@@ -78,42 +95,48 @@ type APIError struct {
 // Providers configuration.
 var (
 	OpenAI = &Provider{
-		Name:         "OpenAI",
-		Endpoint:     "https://api.openai.com/v1/chat/completions",
-		DefaultModel: "gpt-4o",
-		EnvVar:       "OPENAI_API_KEY",
-		AuthType:     AuthBearer,
+		Name:          "OpenAI",
+		BaseURL:       "https://api.openai.com",
+		Path:          "/v1/chat/completions",
+		BaseURLEnvVar: "OPENAI_BASE_URL",
+		DefaultModel:  "gpt-4o",
+		EnvVar:        "OPENAI_API_KEY",
+		AuthType:      AuthBearer,
 	}
 
 	Anthropic = &Provider{
-		Name:         "Anthropic",
-		Endpoint:     "https://api.anthropic.com/v1/messages",
-		DefaultModel: "claude-sonnet-4-20250514",
-		EnvVar:       "ANTHROPIC_API_KEY",
-		AuthType:     AuthAPIKey,
+		Name:          "Anthropic",
+		BaseURL:       "https://api.anthropic.com",
+		Path:          "/v1/messages",
+		BaseURLEnvVar: "ANTHROPIC_BASE_URL",
+		DefaultModel:  "claude-sonnet-4-20250514",
+		EnvVar:        "ANTHROPIC_API_KEY",
+		AuthType:      AuthAPIKey,
 	}
 
 	Gemini = &Provider{
-		Name:         "Gemini",
-		Endpoint:     "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
-		DefaultModel: "gemini-2.0-flash",
-		EnvVar:       "GEMINI_API_KEY",
-		AuthType:     AuthBearer,
+		Name:          "Gemini",
+		BaseURL:       "https://generativelanguage.googleapis.com",
+		Path:          "/v1beta/openai/chat/completions",
+		BaseURLEnvVar: "GEMINI_BASE_URL",
+		DefaultModel:  "gemini-2.0-flash",
+		EnvVar:        "GEMINI_API_KEY",
+		AuthType:      AuthBearer,
 	}
 
 	DeepSeek = &Provider{
-		Name:         "DeepSeek",
-		Endpoint:     "https://api.deepseek.com/chat/completions",
-		DefaultModel: "deepseek-chat",
-		EnvVar:       "DEEPSEEK_API_KEY",
-		AuthType:     AuthBearer,
+		Name:          "DeepSeek",
+		BaseURL:       "https://api.deepseek.com",
+		Path:          "/chat/completions",
+		BaseURLEnvVar: "DEEPSEEK_BASE_URL",
+		DefaultModel:  "deepseek-chat",
+		EnvVar:        "DEEPSEEK_API_KEY",
+		AuthType:      AuthBearer,
 	}
 
 	GitHubCopilot = &Provider{
 		Name:         "GitHub Copilot",
-		Endpoint:     "", // Uses gh CLI
 		DefaultModel: "gpt-4",
-		EnvVar:       "", // No env var needed, uses gh auth
 		AuthType:     AuthCLI,
 	}
 )
@@ -249,7 +272,7 @@ func (p *Provider) queryOpenAICompatible(ctx context.Context, apiKey, model, pro
 		return "", pkgerrors.Wrap(err, "failed to marshal request")
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, p.Endpoint, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, p.Endpoint(), bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", pkgerrors.Wrap(err, "failed to create request")
 	}

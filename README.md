@@ -115,8 +115,26 @@ GitHub Copilot  Ready           gpt-4                     gh copilot (CLI)
 | `ANTHROPIC_API_KEY` | Anthropic API key |
 | `GEMINI_API_KEY` | Google Gemini API key |
 | `DEEPSEEK_API_KEY` | DeepSeek API key |
+| `OPENAI_BASE_URL` | Override OpenAI base URL (host only, path is appended) |
+| `ANTHROPIC_BASE_URL` | Override Anthropic base URL |
+| `GEMINI_BASE_URL` | Override Gemini base URL |
+| `DEEPSEEK_BASE_URL` | Override DeepSeek base URL |
 | `HOWTO_MODEL` | Override default model for auto-detected provider |
 | `HOWTO_PROVIDER` | Force a specific provider |
+| `HOWTO_TIMEOUT` | Request timeout (e.g. `30s`, `1m`) — default `30s` |
+
+### Base URL Overrides
+
+Each API provider accepts a `<PROVIDER>_BASE_URL` env var that replaces the
+default host. The provider's API path (e.g. `/v1/messages`) is appended to
+whatever you pass, so set the **host base only**:
+
+```bash
+# Route Anthropic traffic through a local proxy or fake
+ANTHROPIC_BASE_URL=http://localhost:1337 \
+  howto -p Anthropic "list files changed today"
+# → POSTs to http://localhost:1337/v1/messages
+```
 
 ## GitHub Copilot Setup
 
