@@ -14,7 +14,7 @@ import (
 // AnthropicRequest represents an Anthropic API request.
 type AnthropicRequest struct {
 	Model     string             `json:"model"`
-	MaxTokens int                `json:"max_tokens"`
+	MaxTokens int                `json:"max_tokens"` //nolint:tagliatelle // Anthropic API requires snake_case
 	Messages  []AnthropicMessage `json:"messages"`
 }
 
