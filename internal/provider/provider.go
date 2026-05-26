@@ -70,7 +70,7 @@ type ProviderInfo struct {
 type ChatRequest struct {
 	Model     string    `json:"model"`
 	Messages  []Message `json:"messages"`
-	MaxTokens int       `json:"max_tokens"`
+	MaxTokens int       `json:"max_tokens"` //nolint:tagliatelle // upstream APIs require snake_case
 }
 
 // Message represents a chat message.
